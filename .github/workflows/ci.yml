@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm --filter @lifeos/shared build
+      - run: pnpm --filter @lifeos/contracts build
+      - run: pnpm --filter @lifeos/shared test
+      - run: pnpm --filter @lifeos/api build
+      - run: pnpm --filter @lifeos/worker build
+      - run: pnpm --filter @lifeos/web build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test
+          NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
