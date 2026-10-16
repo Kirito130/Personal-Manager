@@ -2,6 +2,8 @@
 
 Use the hosted project instead of Docker. Local Docker remains optional for offline work.
 
+Architecture contract: [ADR-0010](../adr/0010-supabase-hybrid.md) — one Supabase Postgres; Nest API/worker for domain; browser Auth session only.
+
 ## Project
 
 | Field | Value |

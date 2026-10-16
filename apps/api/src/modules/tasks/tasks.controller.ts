@@ -1,15 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateTaskSchema, UpdateTaskSchema } from '@lifeos/contracts';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { TasksService } from './tasks.service';
 
 @ApiTags('tasks')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasks: TasksService) {}

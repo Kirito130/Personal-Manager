@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CorrelationRuleSchema } from '@lifeos/contracts';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { CorrelationsService } from './correlations.service';
 
 @ApiTags('correlations')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('finance-correlations')
 export class CorrelationsController {
   constructor(private readonly correlations: CorrelationsService) {}

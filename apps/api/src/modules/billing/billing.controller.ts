@@ -1,15 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateInvoiceSchema } from '@lifeos/contracts';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { BillingService } from './billing.service';
 
 @ApiTags('billing')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('billing')
 export class BillingController {
   constructor(private readonly billing: BillingService) {}

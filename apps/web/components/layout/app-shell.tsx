@@ -1,7 +1,7 @@
 'use client';
 
 import { ScopeProvider } from '@/context/scope-context';
-import { createClient } from '@/lib/supabase/client';
+import { createBrowserAuthClient } from '@/lib/supabase/browser-auth';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,8 +14,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   async function signOut() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    const { auth } = createBrowserAuthClient();
+    await auth.signOut();
     router.push('/login');
     router.refresh();
   }

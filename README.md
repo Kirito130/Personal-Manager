@@ -5,10 +5,17 @@ Authoritative product contract: [`project.md`](./project.md).
 
 ## Architecture
 
-- **Database / Auth / Storage / Realtime:** Supabase
-- **API:** NestJS modular monolith (`apps/api`)
+```text
+Browser → Supabase Auth (session) + Nest API → one Supabase Postgres
+                              Nest worker ↗ (outbox, same DB)
+```
+
+- **Database / Auth / Storage / Realtime:** Supabase (single project)
+- **API:** NestJS modular monolith (`apps/api`) — all money/org/permissioned access
 - **Worker:** Postgres outbox consumer (`apps/worker`) — finance correlations, notifications
-- **Web / PWA:** Next.js (`apps/web`)
+- **Web / PWA:** Next.js (`apps/web`) — Auth only; domain via Nest
+
+Contract: [`docs/adr/0010-supabase-hybrid.md`](./docs/adr/0010-supabase-hybrid.md), [`docs/architecture/trust-boundary.md`](./docs/architecture/trust-boundary.md).
 
 Personal and business finance books stay separate, with owner-controlled **salary → personal income** correlations.
 

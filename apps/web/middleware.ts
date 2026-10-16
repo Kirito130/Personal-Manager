@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const PUBLIC_PATHS = ['/login', '/signup', '/auth/callback'];
 
+/** Session gate only — domain authorization is enforced in Nest + PolicyService. */
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 

@@ -1,13 +1,11 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { HomeService } from './home.service';
 
 @ApiTags('home')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller()
 export class HomeController {
   constructor(private readonly home: HomeService) {}

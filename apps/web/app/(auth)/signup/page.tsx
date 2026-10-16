@@ -1,6 +1,6 @@
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
+import { createBrowserAuthClient } from '@/lib/supabase/browser-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
@@ -18,8 +18,8 @@ export default function SignupPage() {
     setPending(true);
     setError(null);
     setMessage(null);
-    const supabase = createClient();
-    const { data, error: authError } = await supabase.auth.signUp({
+    const { auth } = createBrowserAuthClient();
+    const { data, error: authError } = await auth.signUp({
       email,
       password,
       options: {

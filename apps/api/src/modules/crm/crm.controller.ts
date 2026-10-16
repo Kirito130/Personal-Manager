@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { CrmService } from './crm.service';
 
 @ApiTags('crm')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('crm')
 export class CrmController {
   constructor(private readonly crm: CrmService) {}

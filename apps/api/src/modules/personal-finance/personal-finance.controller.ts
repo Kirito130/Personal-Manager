@@ -1,15 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JournalDraftSchema } from '@lifeos/contracts';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { PersonalFinanceService } from './personal-finance.service';
 
 @ApiTags('personal-finance')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('personal-finance')
 export class PersonalFinanceController {
   constructor(private readonly finance: PersonalFinanceService) {}

@@ -1,12 +1,18 @@
+/**
+ * LifeOS outbox worker — same Supabase Postgres as Nest API (ADR-0010).
+ * System consumer: processes domain_events_outbox; not a second database.
+ */
 import { Pool } from 'pg';
 import { randomUUID } from 'crypto';
 import { handleOwnerCompensation } from './handlers/owner-compensation';
 import { handleNotifications } from './handlers/notifications';
 
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
-});
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL is required (single Supabase Postgres for Nest API/worker)');
+}
+
+const pool = new Pool({ connectionString });
 
 const pollInterval = Number(process.env.WORKER_POLL_INTERVAL_MS ?? 2000);
 

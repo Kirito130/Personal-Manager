@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { AutomationService } from './automation.service';
 
 @ApiTags('automations')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('automations')
 export class AutomationController {
   constructor(private readonly automation: AutomationService) {}

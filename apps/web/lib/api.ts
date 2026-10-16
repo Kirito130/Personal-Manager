@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+import { createBrowserAuthClient } from '@/lib/supabase/browser-auth';
 
 export class ApiError extends Error {
   constructor(
@@ -11,15 +11,19 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Typed client for the Nest domain API. All money / org / permissioned
+ * reads and writes go here — never via Supabase PostgREST from the browser.
+ */
 function apiBase(): string {
   return process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api/v1';
 }
 
 async function getAccessToken(): Promise<string | null> {
-  const supabase = createClient();
+  const { auth } = createBrowserAuthClient();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await auth.getSession();
   return session?.access_token ?? null;
 }
 

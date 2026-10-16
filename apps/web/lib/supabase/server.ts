@@ -1,6 +1,10 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+/**
+ * Server Supabase client for Auth cookie session refresh / exchange only.
+ * Do not query domain schemas with `.from()` — use the Nest API instead.
+ */
 export async function createClient() {
   const cookieStore = await cookies();
 

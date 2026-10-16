@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { KnowledgeService } from './knowledge.service';
 
 @ApiTags('knowledge')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller()
 export class KnowledgeController {
   constructor(private readonly knowledge: KnowledgeService) {}

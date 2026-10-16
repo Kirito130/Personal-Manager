@@ -1,16 +1,24 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 
+/**
+ * Direct Postgres access to the single LifeOS / Supabase database.
+ *
+ * Connections use the DB role from DATABASE_URL (typically bypasses RLS).
+ * That is intentional for the Nest domain layer — authorization MUST go through
+ * PolicyService (and resource-scoped queries) before mutating or reading data.
+ * Do not treat a successful query as proof the caller owns the row.
+ */
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
   private readonly pool: Pool;
 
   constructor() {
-    this.pool = new Pool({
-      connectionString:
-        process.env.DATABASE_URL ??
-        'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
-    });
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error('DATABASE_URL is required (single Supabase Postgres for Nest API/worker)');
+    }
+    this.pool = new Pool({ connectionString });
   }
 
   async query<T extends QueryResultRow = QueryResultRow>(

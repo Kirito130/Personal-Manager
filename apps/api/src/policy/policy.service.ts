@@ -1,6 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 
+/**
+ * Application-layer authorization for the Nest domain API.
+ * Required on every permissioned path: the DB pool bypasses RLS, so PolicyService
+ * (plus resource-scoped SQL) is the real access-control boundary.
+ */
 @Injectable()
 export class PolicyService {
   constructor(private readonly db: DatabaseService) {}
@@ -55,6 +60,39 @@ export class PolicyService {
     const role = await this.assertOrgMember(userId, organizationId);
     if (!roles.includes(role)) {
       throw new ForbiddenException({ code: 'FORBIDDEN', message: 'Insufficient role' });
+    }
+  }
+
+  /** Ensure finance accounts belong to the caller's personal book (IDOR guard). */
+  async assertPersonalBookAccounts(bookId: string, accountIds: string[]): Promise<void> {
+    const unique = [...new Set(accountIds)];
+    if (unique.length === 0) return;
+    const result = await this.db.query<{ id: string }>(
+      `SELECT id FROM finance_personal.finance_accounts
+       WHERE book_id = $1 AND id = ANY($2::uuid[])`,
+      [bookId, unique],
+    );
+    if (result.rows.length !== unique.length) {
+      throw new ForbiddenException({
+        code: 'FORBIDDEN',
+        message: 'Account not in your personal finance book',
+      });
+    }
+  }
+
+  async assertPersonalBookCategories(bookId: string, categoryIds: string[]): Promise<void> {
+    const unique = [...new Set(categoryIds.filter(Boolean))];
+    if (unique.length === 0) return;
+    const result = await this.db.query<{ id: string }>(
+      `SELECT id FROM finance_personal.finance_categories
+       WHERE book_id = $1 AND id = ANY($2::uuid[])`,
+      [bookId, unique],
+    );
+    if (result.rows.length !== unique.length) {
+      throw new ForbiddenException({
+        code: 'FORBIDDEN',
+        message: 'Category not in your personal finance book',
+      });
     }
   }
 }

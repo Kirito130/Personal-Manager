@@ -65,6 +65,14 @@ export class PersonalFinanceService {
   async createDraft(userId: string, dto: JournalDraftDto) {
     const bookId = await this.ensureBook(userId);
     this.assertDraftBalance(dto);
+    await this.policy.assertPersonalBookAccounts(
+      bookId,
+      dto.postings.map((p) => p.accountId),
+    );
+    await this.policy.assertPersonalBookCategories(
+      bookId,
+      dto.postings.map((p) => p.categoryId).filter((id): id is string => Boolean(id)),
+    );
 
     return this.db.withTransaction(async (client) => {
       const journal = await client.query(

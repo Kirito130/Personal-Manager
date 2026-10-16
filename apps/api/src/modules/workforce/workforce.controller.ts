@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { WorkforceService } from './workforce.service';
 
 @ApiTags('workforce')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller()
 export class WorkforceController {
   constructor(private readonly workforce: WorkforceService) {}

@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateCalendarEventSchema, CreateTimeBlockSchema } from '@lifeos/contracts';
-import { SupabaseAuthGuard } from '../../auth/supabase-auth.guard';
 import { CurrentUser } from '../../auth/current-user.decorator';
 import { AuthUser } from '../../auth/auth.types';
 import { CalendarService } from './calendar.service';
 
 @ApiTags('calendar')
 @ApiBearerAuth()
-@UseGuards(SupabaseAuthGuard)
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendar: CalendarService) {}
