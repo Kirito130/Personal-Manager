@@ -2,10 +2,42 @@
  * LifeOS outbox worker — same Supabase Postgres as Nest API (ADR-0010).
  * System consumer: processes domain_events_outbox; not a second database.
  */
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import { Pool } from 'pg';
 import { randomUUID } from 'crypto';
 import { handleOwnerCompensation } from './handlers/owner-compensation';
 import { handleNotifications } from './handlers/notifications';
+
+/** Load monorepo root `.env` when cwd is apps/worker (pnpm filter). */
+function loadRootEnv() {
+  const candidates = [
+    resolve(process.cwd(), '.env'),
+    resolve(process.cwd(), '../../.env'),
+    resolve(__dirname, '../../../.env'),
+  ];
+  for (const file of candidates) {
+    if (!existsSync(file)) continue;
+    for (const line of readFileSync(file, 'utf8').split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq <= 0) continue;
+      const key = trimmed.slice(0, eq).trim();
+      let value = trimmed.slice(eq + 1).trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      if (process.env[key] === undefined) process.env[key] = value;
+    }
+    break;
+  }
+}
+
+loadRootEnv();
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
